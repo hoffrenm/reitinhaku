@@ -3,17 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reitinhaku;
-
-import reitinhaku.ui.PathfinderUi;
+package reitinhaku.logics;
 
 /**
  *
- * @author hoffrenm
+ * @author Mika Hoffren
  */
-public class Main {
-
-    public static void main(String[] args) {
-        PathfinderUi.main(args);
-    }
+public class JPS {
+    
 }
