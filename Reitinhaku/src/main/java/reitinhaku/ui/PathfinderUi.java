@@ -13,7 +13,6 @@ import reitinhaku.domain.Graph;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -39,10 +38,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import reitinhaku.domain.Node;
+import reitinhaku.domain.Result;
 
 /**
  *
@@ -127,15 +128,16 @@ public class PathfinderUi extends Application {
             int y = (int) e.getY();
 
             if (click == MouseButton.PRIMARY) {
-                goalX.setText(Double.toString(x));
-                goalY.setText(Double.toString(y));
-
-                graph.setGoal(x, y);
-            } else if (click == MouseButton.SECONDARY) {
                 startX.setText(Double.toString(e.getX()));
                 startY.setText(Double.toString(e.getY()));
 
                 graph.setStart(x, y);
+            } else if (click == MouseButton.SECONDARY) {
+
+                goalX.setText(Double.toString(x));
+                goalY.setText(Double.toString(y));
+
+                graph.setGoal(x, y);
             }
 
             System.out.println("maali: " + graph.getGoal() + "\n alku: " + graph.getStart());
@@ -147,6 +149,21 @@ public class PathfinderUi extends Application {
         Button solveButton = new Button("Selvitä reitti");
         Button openButton = new Button("Valitse kartta");
         Button exitButton = new Button("Lopeta");
+
+        VBox results = new VBox();
+        HBox h1 = new HBox();
+        HBox h2 = new HBox();
+        HBox h3 = new HBox();
+        Text t1 = new Text("Time: ");
+        Text time = new Text();
+        Text t2 = new Text("Path length: ");
+        Text pathLength = new Text();
+        Text t3 = new Text("Nodes explored: ");
+        Text exploredNodes = new Text();
+        h1.getChildren().addAll(t1, time);
+        h2.getChildren().addAll(t2, pathLength);
+        h3.getChildren().addAll(t3, exploredNodes);
+        results.getChildren().addAll(h1, h2, h3);
 
         exitButton.setMinWidth(buttons.getPrefWidth());
         openButton.setMinWidth(buttons.getPrefWidth());
@@ -160,11 +177,23 @@ public class PathfinderUi extends Application {
             Node goal = graph.getGoal();
 
             if (start != null && goal != null) {
-                astar.findPath(graph.getStart(), graph.getGoal());
-                List<Node> path = astar.getPath();
+                RadioButton selectedAlg = (RadioButton) group.getSelectedToggle();
+                String alg = selectedAlg.getText();
+                Result solution = null;
+                
+                if (alg.equals("A*")) {
+                    astar.findPath(start, goal);
+                    solution = astar.getSolution();
+                } else if (alg.equals("Jump Point Search")) {
+                    jps.findPath(start, goal);
+                    solution = jps.getSolution();
+                }
 
-                if (!path.isEmpty()) {
-                    drawPath(path);
+                if (solution != null) {
+                    drawPath(solution);
+                    time.setText(solution.getTime() + " ms");
+                    pathLength.setText(solution.getPath().size() + " nodes");
+                    exploredNodes.setText(solution.getExplored().size() + " nodes");
                 } else {
                     System.out.println("*** NO SOLUTION ***");
                 }
@@ -178,15 +207,16 @@ public class PathfinderUi extends Application {
         sidebar.setAlignment(Pos.CENTER);
         sidebar.setPadding(new Insets(20, 40, 0, 40));
         sidebar.setSpacing(10);
-        sidebar.getChildren().addAll(solveButton, coordinates, algorithms, buttons);
+        sidebar.getChildren().addAll(results, solveButton, coordinates, algorithms, buttons);
 
         root.setRight(sidebar);
 
         root.setBackground(new Background(new BackgroundFill(Color.GAINSBORO, CornerRadii.EMPTY, Insets.EMPTY)));
-        root.setPrefHeight(600);
-        root.setPrefWidth(1000);
+        root.setPrefHeight(1000);
+        root.setPrefWidth(1300);
 
         Scene scene = new Scene(root);
+        stage.setTitle("Pathfinding");
         stage.setScene(scene);
         stage.show();
     }
@@ -195,15 +225,19 @@ public class PathfinderUi extends Application {
         launch(args);
     }
 
-    private void drawPath(List<Node> solution) {
+    private void drawPath(Result solution) {
         GraphicsContext gc = route.getGraphicsContext2D();
         gc.clearRect(0, 0, 1000, 1000);
-        gc.setFill(Color.RED);
 
-        for (Node node : solution) {
-            gc.fillOval(node.getX(), node.getY(), 2, 2);
+        gc.setFill(Color.BLUE);
+        for (Node node : solution.getExplored()) {
+            gc.fillOval(node.getX(), node.getY(), 1, 1);
         }
 
+        gc.setFill(Color.RED);
+        for (Node node : solution.getPath()) {
+            gc.fillOval(node.getX(), node.getY(), 2, 2);
+        }
     }
 
     EventHandler<ActionEvent> btnLoadEventListener
@@ -219,6 +253,7 @@ public class PathfinderUi extends Application {
                     BufferedImage bufferedImage = ImageIO.read(file);
                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                     map.setImage(image);
+                    route.getGraphicsContext2D().clearRect(0, 0, image.getHeight(), image.getWidth());
                     route.setWidth(image.getWidth());
                     route.setHeight(image.getHeight());
 
@@ -226,6 +261,7 @@ public class PathfinderUi extends Application {
 
                     graph.debug();
                 } catch (IOException ex) {
+                    System.out.println("Error uploading an image: " + ex.toString());
                 }
             }
 

@@ -70,9 +70,13 @@ public class GraphBuilder {
                     Node[] connections = node.getConnections();
 
                     connections[0] = nodeArr[i][j - 1] != null ? nodeArr[i][j - 1] : null; // left
-                    connections[1] = nodeArr[i - 1][j] != null ? nodeArr[i - 1][j] : null; // up
-                    connections[2] = nodeArr[i][j + 1] != null ? nodeArr[i][j + 1] : null; // right
-                    connections[3] = nodeArr[i + 1][j] != null ? nodeArr[i + 1][j] : null; // down
+                    connections[1] = nodeArr[i - 1][j - 1] != null ? nodeArr[i - 1][j - 1] : null; // top-left
+                    connections[2] = nodeArr[i - 1][j] != null ? nodeArr[i - 1][j] : null; // top
+                    connections[3] = nodeArr[i - 1][j + 1] != null ? nodeArr[i - 1][j + 1] : null; // top-right
+                    connections[4] = nodeArr[i][j + 1] != null ? nodeArr[i][j + 1] : null; // right
+                    connections[5] = nodeArr[i + 1][j + 1] != null ? nodeArr[i + 1][j + 1] : null; // bottom-right
+                    connections[6] = nodeArr[i + 1][j] != null ? nodeArr[i + 1][j] : null; // bottom
+                    connections[7] = nodeArr[i + 1][j - 1] != null ? nodeArr[i + 1][j - 1] : null; // bottom-left
                 }
             }
         }

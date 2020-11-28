@@ -20,6 +20,7 @@ public class Node implements Comparable<Node> {
     private Node previous;
     private Node[] connections;
 
+    private boolean opened;
     private boolean closed;
 
     public Node(int x, int y) {
@@ -28,7 +29,8 @@ public class Node implements Comparable<Node> {
         this.gScore = Float.MAX_VALUE;
         this.fScore = Float.MAX_VALUE;
         this.previous = null;
-        this.connections = new Node[4];
+        this.connections = new Node[8];
+        this.opened = false;
         this.closed = false;
     }
 
@@ -62,6 +64,14 @@ public class Node implements Comparable<Node> {
 
     public void setPrevious(Node previous) {
         this.previous = previous;
+    }
+
+    public boolean isOpened() {
+        return opened;
+    }
+
+    public void openNode() {
+        this.opened = true;
     }
 
     public boolean isClosed() {

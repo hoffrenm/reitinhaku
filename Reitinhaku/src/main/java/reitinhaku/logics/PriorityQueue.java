@@ -9,8 +9,7 @@ package reitinhaku.logics;
  *
  * @author Mika Hoffren
  */
-public class PriorityQueue {
-    
+public class PriorityQueue { 
     // todo implementation of priority queue with
     // only necessary functionality
 }
