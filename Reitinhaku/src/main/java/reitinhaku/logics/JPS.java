@@ -43,14 +43,14 @@ public class JPS {
     }
 
     public void findPath(Node start, Node goal) {
-        double startTime = System.currentTimeMillis();
-
         Queue<Node> openQueue = new PriorityQueue<>();
         Queue<Node> closed = new PriorityQueue<>();
         openQueue.add(start);
 
         start.setgScore(0f);
         start.setfScore(heuristic(start, goal));
+
+        double startTime = System.currentTimeMillis();
 
         while (!openQueue.isEmpty()) {
             Node current = openQueue.poll();
@@ -64,7 +64,7 @@ public class JPS {
                 break;
             }
 
-            for (Node next : current.getConnections()) {
+            for (Node next : prunedNeighbours(current)) {
                 if (next == null || next.isClosed()) {
                     continue;
                 }
@@ -72,19 +72,19 @@ public class JPS {
                 int dx = next.getX() - current.getX();
                 int dy = next.getY() - current.getY();
 
-                Node jumpNode = jump(current, dx, dy, goal);
+                Node jumpNode = jump(next, goal, dx, dy);
 
                 if (jumpNode == null || jumpNode.isClosed()) {
                     continue;
                 }
 
-                float distanceToJumpNode = heuristic(jumpNode, current);
+                float distanceToJumpNode = heuristic(current, jumpNode);
                 float travelledDistance = current.getgScore() + distanceToJumpNode;
 
-                if (!jumpNode.isOpened() || travelledDistance < next.getgScore()) {
-                    next.setPrevious(current);
-                    next.setgScore(travelledDistance);
-                    next.setfScore(travelledDistance + heuristic(next, goal));
+                if (travelledDistance < jumpNode.getgScore()) {
+                    jumpNode.setPrevious(current);
+                    jumpNode.setgScore(travelledDistance);
+                    jumpNode.setfScore(travelledDistance + heuristic(jumpNode, goal));
 
                     jumpNode.openNode();
                     openQueue.add(jumpNode);
@@ -93,22 +93,7 @@ public class JPS {
         }
     }
 
-    private Node jump(Node current, int dx, int dy, Node goal) {
-        int direction = dx + dy;
-        int index = -1;
-
-        if (Math.abs(direction) == 2) {
-            index = dx > 0 ? 5 : 1;
-        } else if (direction == 0) {
-            index = dx > 0 ? 7 : 3;
-        } else if (direction == 1) {
-            index = dx > dy ? 6 : 4;
-        } else if (direction == -1) {
-            index = dx > dy ? 0 : 2;
-        }
-
-        Node next = current.getConnections()[index];
-
+    private Node jump(Node next, Node goal, int dx, int dy) {
         if (next == null || next.isClosed()) {
             return null;
         }
@@ -117,51 +102,145 @@ public class JPS {
             return next;
         }
 
+        int direction = dx + dy;
+        int index = -1;
+
+        if (Math.abs(direction) == 2) {
+            index = dx > 0 ? 5 : 1;
+        } else if (direction == 0) {
+            index = dx > 0 ? 3 : 7;
+        } else if (direction == 1) {
+            index = dx > dy ? 4 : 6;
+        } else if (direction == -1) {
+            index = dx > dy ? 2 : 0;
+        }
+
+        Node[] neighbours = next.getConnections();
+        Node follower = neighbours[index];
+
         //Diagonal movement
         if (dx != 0 && dy != 0) {
-            // Horizontal
-            if (jump(next, dx, 0, goal) != null) {
+            if (index == 7) {
+                if ((neighbours[1] != null && neighbours[2] == null)
+                        || (neighbours[5] != null && neighbours[4] == null)
+                        || (neighbours[0] == null && neighbours[6] == null)) {
+                    return next;
+                }
+            } else if (index == 1) {
+                if ((neighbours[7] != null && neighbours[6] == null)
+                        || (neighbours[3] != null && neighbours[4] == null)
+                        || (neighbours[0] == null && neighbours[2] != null)) {
+                    return next;
+                }
+            } else if (index == 5) {
+                if ((neighbours[7] != null && neighbours[0] == null)
+                        || (neighbours[3] != null && neighbours[2] == null)
+                        || (neighbours[6] == null && neighbours[4] == null)) {
+                    return next;
+                }
+            } else if (index == 3) {
+                if ((neighbours[1] != null && neighbours[0] == null)
+                        || (neighbours[5] != null && neighbours[6] == null)
+                        || (neighbours[2] == null && neighbours[4] == null)) {
+                    return next;
+                }
+            }
+
+            if ((jump(next, goal, dx, 0) != null) || (jump(next, goal, 0, dy) != null)) {
                 return next;
             }
-            // Vertical
-            if (jump(next, 0, dy, goal) != null) {
-                return next;
-            }
-            //Vertical or horizontal movement
         } else {
             //Horizontal
-            Node[] temp = current.getConnections();
             if (dx != 0) {
-                if (temp[2] != null || temp[6] != null) {
-                    return next;
+                if (dx > 0) {
+                    if ((neighbours[3] != null && neighbours[2] == null) || (neighbours[5] != null && neighbours[6] == null)) {
+                        return next;
+                    }
+                } else {
+                    if ((neighbours[1] != null && neighbours[2] == null) || (neighbours[7] != null && neighbours[6] == null)) {
+                        return next;
+                    }
                 }
                 //Vertical
             } else {
-                if (temp[0] != null || temp[4] != null) {
-                    return next;
+                if (dy > 0) {
+                    if ((neighbours[5] != null && neighbours[4] == null) || (neighbours[7] != null && neighbours[0] == null)) {
+                        return next;
+                    }
+                } else {
+                    if ((neighbours[1] != null && neighbours[0] == null) || (neighbours[3] != null && neighbours[4] == null)) {
+                        return next;
+                    }
                 }
             }
         }
 
-        return jump(next, dx, dy, goal);
+        return jump(follower, goal, dx, dy);
     }
 
-    private float heuristic(Node current, Node goal) {
-        float x = Math.abs(current.getX() - goal.getX());
-        float y = Math.abs(current.getY() - goal.getY());
+    private Node[] prunedNeighbours(Node next) {
+        Node[] neighbours = new Node[8];
+        Node[] connections = next.getConnections();
+        Node previous = next.getPrevious();
+
+        if (previous == null) {
+            return connections;
+        }
+
+        int dx = next.getX() - previous.getX();
+        int dy = next.getY() - previous.getY();
+
+        dx = Math.max(-1, Math.min(1, dx));
+        dy = Math.max(-1, Math.min(1, dy));
+
+        int direction = dx + dy;
+        int index = -1;
+
+        if (Math.abs(direction) == 2) {
+            index = dx > 0 ? 5 : 1;
+        } else if (direction == 0) {
+            index = dx > 0 ? 3 : 7;
+        } else if (direction == 1) {
+            index = dx > dy ? 4 : 6;
+        } else if (direction == -1) {
+            index = dx > dy ? 2 : 0;
+        }
+
+        if (dx != 0 && dy != 0) {
+            neighbours[(index - 1) % 8] = connections[(index - 1) % 8];
+            neighbours[(index) % 8] = connections[(index) % 8];
+            neighbours[(index + 1) % 8] = connections[(index + 1) % 8];
+
+            if (connections[(index + 5) % 8] == null) {
+                neighbours[(index + 6) % 8] = connections[(index + 6) % 8];
+            }
+
+            if (connections[(index + 3) % 8] == null) {
+                neighbours[(index + 2) % 8] = connections[(index + 2) % 8];
+            }
+        } else {
+            neighbours[(index)] = connections[(index)];
+
+            if (connections[(index + 2) % 8] == null) {
+                neighbours[(index + 1) % 8] = connections[(index + 1) % 8];
+            }
+
+            if (connections[(index + 6) % 8] == null) {
+                neighbours[(index + 7) % 8] = connections[(index + 7) % 8];
+            }
+        }
+
+        return neighbours;
+    }
+
+    private float heuristic(Node first, Node second) {
+        float x = Math.abs(first.getX() - second.getX());
+        float y = Math.abs(first.getY() - second.getY());
 
         double xx = Math.pow(x, 2);
         double yy = Math.pow(y, 2);
 
         return (float) Math.sqrt(xx + yy);
-    }
-
-    private boolean isDiagonal(Node current, Node next) {
-        if (current.getX() != next.getX() && current.getY() != next.getY()) {
-            return true;
-        }
-
-        return false;
     }
 
 }

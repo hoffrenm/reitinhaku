@@ -231,7 +231,7 @@ public class PathfinderUi extends Application {
 
         gc.setFill(Color.BLUE);
         for (Node node : solution.getExplored()) {
-            gc.fillOval(node.getX(), node.getY(), 1, 1);
+            gc.fillOval(node.getX(), node.getY(), 3, 3);
         }
 
         gc.setFill(Color.RED);
