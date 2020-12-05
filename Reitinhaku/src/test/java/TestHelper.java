@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package reitinhaku.logics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,24 +6,22 @@ import javafx.scene.image.PixelReader;
 import reitinhaku.domain.Graph;
 import reitinhaku.domain.Node;
 
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 /**
  *
  * @author Mika Hoffren
  */
-public class GraphBuilder {
+public class TestHelper {
 
-    private static final int PIXEL_VALUE_THRESHOLD = 200;
+    public Graph buildGraphFromDimensions(int x, int y) {
+        Node[][] nodeArr = new Node[y][x];
 
-    private Node[][] nodeArr;
-    
-    public Graph buildGraphFromImage(Image map) {
-        int width = (int) map.getWidth();
-        int height = (int) map.getHeight();
-
-        nodeArr = new Node[height][width];
-
-        createNodes(map, width, height);
-        connectNodes();
+        createNodes(nodeArr, x, y);
+        connectNodes(nodeArr);
 
         List<Node> nodes = new ArrayList<>();
 
@@ -44,25 +36,15 @@ public class GraphBuilder {
         return new Graph(nodes);
     }
 
-    private void createNodes(Image map, int x, int y) {
-        PixelReader reader = map.getPixelReader();
-
+    private void createNodes(Node[][] nodes, int x, int y) {
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
-                int rgb = reader.getArgb(j, i);
-
-                int red = ((rgb >> 16) & 0xff);
-                int green = ((rgb >> 8) & 0xff);
-                int blue = (rgb & 0xff);
-
-                if (isNode(red, green, blue)) {
-                    nodeArr[i][j] = new Node(j, i);
-                }
+                nodes[i][j] = new Node(j, i);
             }
         }
     }
 
-    private void connectNodes() {
+    private void connectNodes(Node[][] nodeArr) {
         for (int i = 1; i < nodeArr.length - 1; i++) {
             for (int j = 1; j < nodeArr[i].length - 1; j++) {
                 Node node = nodeArr[i][j];
@@ -81,9 +63,8 @@ public class GraphBuilder {
             }
         }
     }
-
-    private boolean isNode(int red, int green, int blue) {
-        return red >= PIXEL_VALUE_THRESHOLD && green >= PIXEL_VALUE_THRESHOLD && blue >= PIXEL_VALUE_THRESHOLD;
+    
+    public void removeNode(Graph graph, int x, int y) {
+        
     }
-
 }

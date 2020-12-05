@@ -19,6 +19,9 @@ public class AStar {
 
     private Result solution;
 
+    /**
+     *
+     */
     public AStar() {
     }
 
@@ -28,7 +31,7 @@ public class AStar {
         path.add(goal);
 
         Node previous = goal.getPrevious();
-
+        
         while (previous != null) {
             path.add(previous);
             previous = previous.getPrevious();
@@ -38,25 +41,17 @@ public class AStar {
             visited.add(explored.poll());
         }
         
-        this. solution = new Result(path, visited, time);
+        this.solution = new Result(path, visited, time, goal.getgScore());
     }
 
-    public Result getSolution() {
-        return solution;
-    }
-
-    // todo: refactor this to dedicated class (possibly with multiple heuristics)
-    private float heuristic(Node current, Node goal) {
-        float x = Math.abs(current.getX() - goal.getX());
-        float y = Math.abs(current.getY() - goal.getY());
-
-        double xx = Math.pow(x, 2);
-        double yy = Math.pow(y, 2);
-
-        return (float) Math.sqrt(xx + yy);
-    }
-
-    public void findPath(Node start, Node goal) {
+    /**
+     *
+     * @param start
+     * @param goal
+     * @return
+     */
+    public Result findPath(Node start, Node goal) {
+        this.solution = null;
         double startTime = System.currentTimeMillis();
         
         Queue<Node> openQueue = new PriorityQueue<>();
@@ -64,7 +59,7 @@ public class AStar {
         openQueue.add(start);
         
         start.setgScore(0f);
-        start.setfScore(heuristic(start, goal));
+        start.setfScore(Heuristic.euclidean(start, goal));
 
         while (!openQueue.isEmpty()) {
             Node current = openQueue.poll();
@@ -73,7 +68,6 @@ public class AStar {
 
             if (current == goal) {
                 double endTime = System.currentTimeMillis();
-                System.out.println("Goal reached");
                 constructPath(current, closed, endTime - startTime);
                 break;
             }
@@ -90,12 +84,14 @@ public class AStar {
                 if (travelledDistance < next.getgScore()) {
                     next.setPrevious(current);
                     next.setgScore(travelledDistance);
-                    next.setfScore(travelledDistance + heuristic(next, goal));
+                    next.setfScore(travelledDistance + Heuristic.euclidean(next, goal));
 
                     openQueue.add(next);
                 }
             }
         }
+        
+        return solution;
     }
     
     private boolean isDiagonal(Node current, Node next) {

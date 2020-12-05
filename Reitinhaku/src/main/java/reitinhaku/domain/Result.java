@@ -14,14 +14,16 @@ import java.util.List;
 public class Result {
 
     private double time;
+    private float length;
 
     private List<Node> path;
     private List<Node> explored;
 
-    public Result(List<Node> path, List<Node> explored, double time) {
+    public Result(List<Node> path, List<Node> explored, double time, float length) {
         this.time = time;
         this.path = path;
         this.explored = explored;
+        this.length = length;
     }
 
     public double getTime() {
@@ -46,6 +48,10 @@ public class Result {
 
     public void setExplored(List<Node> explored) {
         this.explored = explored;
+    }
+
+    public float getLength() {
+        return length;
     }
 
     @Override

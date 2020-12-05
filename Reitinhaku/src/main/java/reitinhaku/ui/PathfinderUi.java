@@ -106,7 +106,6 @@ public class PathfinderUi extends Application {
         VBox coordinates = new VBox();
         HBox goalCoor = new HBox();
         HBox startCoor = new HBox();
-        HBox labels = new HBox(new Label("X"), new Label("Y"));;
 
         goalCoor.setPrefWidth(coordinates.getWidth());
         startCoor.setPrefWidth(coordinates.getWidth());
@@ -114,7 +113,7 @@ public class PathfinderUi extends Application {
         goalCoor.getChildren().addAll(goalX, goalY);
         startCoor.getChildren().addAll(startX, startY);
 
-        coordinates.getChildren().addAll(new Label("Koordinaatit"), labels, new Label("Maali"), goalCoor, new Label("Lähtö"), startCoor);
+        coordinates.getChildren().addAll(new Label("Koordinaatit"), new Label("Maali"), goalCoor, new Label("Lähtö"), startCoor);
         coordinates.setPrefWidth(75);
         coordinates.setPadding(new Insets(20, 20, 40, 20));
 
@@ -142,37 +141,59 @@ public class PathfinderUi extends Application {
 
             System.out.println("maali: " + graph.getGoal() + "\n alku: " + graph.getStart());
             System.out.println("[" + e.getX() + ", " + e.getY() + "]");
-            System.out.println(map.getImage().getHeight() + " : " + map.getImage().getWidth());
-
         });
 
         Button solveButton = new Button("Selvitä reitti");
-        Button openButton = new Button("Valitse kartta");
+        Button clearButton = new Button("Tyhjennä");
+        Button openButton = new Button("Lataa kartta");
         Button exitButton = new Button("Lopeta");
 
         VBox results = new VBox();
         HBox h1 = new HBox();
         HBox h2 = new HBox();
         HBox h3 = new HBox();
-        Text t1 = new Text("Time: ");
+        HBox h4 = new HBox();
+        Text t1 = new Text("Aika: ");
         Text time = new Text();
-        Text t2 = new Text("Path length: ");
+        Text t2 = new Text("Solmujen määrä reitillä: ");
         Text pathLength = new Text();
-        Text t3 = new Text("Nodes explored: ");
+        Text t3 = new Text("Tutkitut solmut: ");
         Text exploredNodes = new Text();
+        Text t4 = new Text("Reitin pituus: ");
+        Text pathPixelLength = new Text();
         h1.getChildren().addAll(t1, time);
         h2.getChildren().addAll(t2, pathLength);
         h3.getChildren().addAll(t3, exploredNodes);
-        results.getChildren().addAll(h1, h2, h3);
+        h4.getChildren().addAll(t4, pathPixelLength);
+        results.getChildren().addAll(h1, h4, h2, h3);
 
         exitButton.setMinWidth(buttons.getPrefWidth());
         openButton.setMinWidth(buttons.getPrefWidth());
+        clearButton.setMinWidth(buttons.getPrefWidth());
+        solveButton.setMinWidth(buttons.getPrefWidth());
 
         openButton.setOnAction(btnLoadEventListener);
         exitButton.setOnAction((event) -> {
             stage.close();
         });
+        clearButton.setOnAction((event) -> {
+            Image image = map.getImage();
+            graph = graphBuilder.buildGraphFromImage(image);
+            route.getGraphicsContext2D().clearRect(0, 0, image.getHeight(), image.getWidth());
+        });
         solveButton.setOnAction((event) -> {
+            Image image = map.getImage();
+            graph = graphBuilder.buildGraphFromImage(image);
+            route.getGraphicsContext2D().clearRect(0, 0, image.getHeight(), image.getWidth());
+
+            int xS = (int) Double.parseDouble(startX.getText());
+            int yS = (int) Double.parseDouble(startY.getText());
+            int xG = (int) Double.parseDouble(goalX.getText());
+            int yG = (int) Double.parseDouble(goalY.getText());
+
+            graph.setStart(xS, yS);
+            graph.setGoal(xG, yG);
+
             Node start = graph.getStart();
             Node goal = graph.getGoal();
 
@@ -180,34 +201,33 @@ public class PathfinderUi extends Application {
                 RadioButton selectedAlg = (RadioButton) group.getSelectedToggle();
                 String alg = selectedAlg.getText();
                 Result solution = null;
-                
+
                 if (alg.equals("A*")) {
-                    astar.findPath(start, goal);
-                    solution = astar.getSolution();
+                    solution = astar.findPath(start, goal);
                 } else if (alg.equals("Jump Point Search")) {
-                    jps.findPath(start, goal);
-                    solution = jps.getSolution();
+                    solution = jps.findPath(start, goal);
                 }
 
                 if (solution != null) {
                     drawPath(solution);
                     time.setText(solution.getTime() + " ms");
-                    pathLength.setText(solution.getPath().size() + " nodes");
-                    exploredNodes.setText(solution.getExplored().size() + " nodes");
+                    pathLength.setText(solution.getPath().size() + " solmua");
+                    exploredNodes.setText(solution.getExplored().size() + " solmua");
+                    pathPixelLength.setText(solution.getLength() + " px");
                 } else {
                     System.out.println("*** NO SOLUTION ***");
                 }
             }
         });
 
-        buttons.getChildren().addAll(openButton, exitButton);
+        buttons.getChildren().addAll(solveButton, clearButton, openButton, exitButton);
 
         VBox sidebar = new VBox();
         sidebar.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
         sidebar.setAlignment(Pos.CENTER);
         sidebar.setPadding(new Insets(20, 40, 0, 40));
         sidebar.setSpacing(10);
-        sidebar.getChildren().addAll(results, solveButton, coordinates, algorithms, buttons);
+        sidebar.getChildren().addAll(results, coordinates, algorithms, buttons);
 
         root.setRight(sidebar);
 
@@ -230,13 +250,20 @@ public class PathfinderUi extends Application {
         gc.clearRect(0, 0, 1000, 1000);
 
         gc.setFill(Color.BLUE);
+
         for (Node node : solution.getExplored()) {
-            gc.fillOval(node.getX(), node.getY(), 3, 3);
+            gc.fillOval(node.getX(), node.getY(), 2, 2);
         }
 
-        gc.setFill(Color.RED);
-        for (Node node : solution.getPath()) {
-            gc.fillOval(node.getX(), node.getY(), 2, 2);
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(3);
+        
+        Node previous = graph.getGoal();
+        while (previous != null) {
+            Node temp = previous.getPrevious();
+            if (temp == null) break;
+            gc.strokeLine(previous.getX(), previous.getY(), temp.getX(), temp.getY());
+            previous = previous.getPrevious();
         }
     }
 
