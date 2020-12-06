@@ -13,6 +13,10 @@ import reitinhaku.domain.Graph;
 import reitinhaku.domain.Node;
 
 /**
+ * Auxiliary class which has functionality to transform picture into graph which
+ * is used in pathfinding.
+ *
+ * @see Graph
  *
  * @author Mika Hoffren
  */
@@ -21,7 +25,17 @@ public class GraphBuilder {
     private static final int PIXEL_VALUE_THRESHOLD = 200;
 
     private Node[][] nodeArr;
-    
+
+    /**
+     * Generates map out of image. Pixels from grey to white are considered
+     * walkable nodes and other colors represent nodes which cannot be accessed.
+     *
+     * @param map Image of the map.
+     * @return Graph generated from image.
+     *
+     * @see Image
+     * @see Graph
+     */
     public Graph buildGraphFromImage(Image map) {
         int width = (int) map.getWidth();
         int height = (int) map.getHeight();
@@ -44,6 +58,13 @@ public class GraphBuilder {
         return new Graph(nodes);
     }
 
+    /**
+     * Reads color value of pixels and determines if it is a valid node.
+     *
+     * @param map Picture of a map.
+     * @param x Width of the map.
+     * @param y Height of the map.
+     */
     private void createNodes(Image map, int x, int y) {
         PixelReader reader = map.getPixelReader();
 
@@ -62,6 +83,9 @@ public class GraphBuilder {
         }
     }
 
+    /**
+     * Connects neighbouring nodes to each other so that graph is formed.
+     */
     private void connectNodes() {
         for (int i = 1; i < nodeArr.length - 1; i++) {
             for (int j = 1; j < nodeArr[i].length - 1; j++) {
@@ -82,6 +106,14 @@ public class GraphBuilder {
         }
     }
 
+    /**
+     * Determines if a single pixel is a node.
+     *
+     * @param red Color value for red channel.
+     * @param green Color value for green channel.
+     * @param blue Color value for blue channel.
+     * @return True if color is determined to be valid node, false otherwise.
+     */
     private boolean isNode(int red, int green, int blue) {
         return red >= PIXEL_VALUE_THRESHOLD && green >= PIXEL_VALUE_THRESHOLD && blue >= PIXEL_VALUE_THRESHOLD;
     }

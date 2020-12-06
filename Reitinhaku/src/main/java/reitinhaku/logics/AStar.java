@@ -12,6 +12,8 @@ import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 
 /**
+ * Pathfinding algorithm that uses A* (A-star) to find the shortest path between
+ * two nodes in a graph.
  *
  * @author Mika Hoffren
  */
@@ -20,44 +22,50 @@ public class AStar {
     private Result solution;
 
     /**
+     * Generates solution which contains backtraced path from goal to start.
+     * Includes duration and nodes which have been visited during pathfinding.
      *
+     * @param goal Goal node.
+     * @param explored List of explored nodes.
+     * @param time Time elapsed on pathfinding.
      */
-    public AStar() {
-    }
-
     private void constructPath(Node goal, Queue<Node> explored, double time) {
+        this.solution = null;
+
         ArrayList<Node> path = new ArrayList<>();
         ArrayList<Node> visited = new ArrayList<>();
         path.add(goal);
 
         Node previous = goal.getPrevious();
-        
+
         while (previous != null) {
             path.add(previous);
             previous = previous.getPrevious();
         }
-        
+
         while (!explored.isEmpty()) {
             visited.add(explored.poll());
         }
-        
+
         this.solution = new Result(path, visited, time, goal.getgScore());
     }
 
     /**
      *
-     * @param start
-     * @param goal
-     * @return
+     * @param start Starting node.
+     * @param goal Destination node.
+     * @return Solution containing time, path, explored nodes and length of the
+     * path. Returns null if there is no path between nodes.
+     *
+     * @see Result
      */
     public Result findPath(Node start, Node goal) {
-        this.solution = null;
         double startTime = System.currentTimeMillis();
-        
+
         Queue<Node> openQueue = new PriorityQueue<>();
         Queue<Node> closed = new PriorityQueue<>();
         openQueue.add(start);
-        
+
         start.setgScore(0f);
         start.setfScore(Heuristic.euclidean(start, goal));
 
@@ -76,9 +84,9 @@ public class AStar {
                 if (next == null || next.isClosed()) {
                     continue;
                 }
-                
+
                 float travelledDistance = current.getgScore();
-                
+
                 travelledDistance += isDiagonal(current, next) ? Math.sqrt(2) : 1;
 
                 if (travelledDistance < next.getgScore()) {
@@ -90,16 +98,19 @@ public class AStar {
                 }
             }
         }
-        
+
         return solution;
     }
-    
+
+    /**
+     * Determines if two nodes are diagonal to each other.
+     *
+     * @param current
+     * @param next
+     * @return True if nodes are in diagonal position, false otherwise.
+     */
     private boolean isDiagonal(Node current, Node next) {
-        if (current.getX() != next.getX() && current.getY() != next.getY()) {
-            return true;
-        }
-        
-        return false;
+        return current.getX() != next.getX() && current.getY() != next.getY();
     }
 
 }

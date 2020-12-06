@@ -13,6 +13,8 @@ import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 
 /**
+ * Pathfinding algorithm that uses Jump Point Search to find the shortest path
+ * between two nodes in a graph.
  *
  * @author Mika Hoffren
  */
@@ -21,16 +23,17 @@ public class JPS {
     private Result solution;
 
     /**
-     * Generates solution which contains backtraced path from goal to start. 
-     * Includes duration and nodes which have been visited during pathfinding. 
-     * 
+     * Generates solution which contains backtraced path from goal to start.
+     * Includes duration, length and nodes which have been visited during
+     * pathfinding.
+     *
      * @param goal Goal node.
      * @param explored List of explored nodes.
      * @param time Time elapsed on pathfinding.
      */
     private void constructPath(Node goal, Queue<Node> explored, double time) {
         this.solution = null;
-        
+
         List<Node> path = new ArrayList<>();
         List<Node> visited = new ArrayList<>();
         path.add(goal);
@@ -50,22 +53,23 @@ public class JPS {
     }
 
     /**
-     * 
+     *
      * @param start Starting node.
      * @param goal Destination node.
-     * @return Solution containing time, path, explored nodes and length of the path
-     * 
+     * @return Solution containing time, path, explored nodes and length of the
+     * path. Returns null if there is no path between nodes.
+     *
      * @see Result
      */
     public Result findPath(Node start, Node goal) {
+        double startTime = System.currentTimeMillis();
+
         Queue<Node> openQueue = new PriorityQueue<>();
         Queue<Node> closed = new PriorityQueue<>();
         openQueue.add(start);
 
         start.setgScore(0f);
         start.setfScore(Heuristic.euclidean(start, goal));
-
-        double startTime = System.currentTimeMillis();
 
         while (!openQueue.isEmpty()) {
             Node current = openQueue.poll();
@@ -88,7 +92,7 @@ public class JPS {
 
                 Node jumpNode = jump(next, goal, dx, dy);
 
-                if (jumpNode == null || jumpNode.isClosed()) {
+                if (jumpNode == null) {
                     continue;
                 }
 
@@ -100,12 +104,11 @@ public class JPS {
                     jumpNode.setgScore(travelledDistance);
                     jumpNode.setfScore(travelledDistance + Heuristic.euclidean(jumpNode, goal));
 
-                    jumpNode.openNode();
                     openQueue.add(jumpNode);
                 }
             }
         }
-        
+
         return solution;
     }
 
@@ -143,7 +146,7 @@ public class JPS {
             if ((jump(next, goal, dx, 0) != null) || (jump(next, goal, 0, dy) != null)) {
                 return next;
             }
-        // Vertical movement
+            // Vertical and horizontal movement
         } else {
             if ((neighbours[(index + 1) % 8] != null && neighbours[(index + 2) % 8] == null)
                     || (neighbours[(index + 7) % 8] != null && neighbours[(index + 6) % 8] == null)) {
@@ -161,7 +164,9 @@ public class JPS {
      *
      * @param dx change of coordinates in horizontal direction.
      * @param dy change of coordinates in vertical direction.
-     * @return index of next neighbour.
+     * @return index of next neighbour in adjacency array.
+     * 
+     * @see Node.
      */
     private int direction(int dx, int dy) {
         // clamp direction down to -1, 0, 1 range
@@ -189,7 +194,9 @@ public class JPS {
      * into consideration. Checks natural and forced neighbours.
      *
      * @param next Node being currently examined.
-     * @return Neighbouring nodes which fulfill criteria.
+     * @return Neighbouring nodes which fulfill pruning criteria.
+     * 
+     * @see Node
      */
     private Node[] prunedNeighbours(Node next) {
         Node[] neighbours = new Node[8];
