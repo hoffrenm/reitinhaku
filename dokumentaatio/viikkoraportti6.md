@@ -1,4 +1,4 @@
-# Viikko 3
+# Viikko 6
 
 ## Tehtyä
 - JPS algoritmi toimii vihdoin halutusti. Sekä A*, että JPS löytävät saman reitin ja JPS toimii kaikissa tilanteissa nopeammin, joten algoritmien toiminta vaikuttaa oikeanlaiselta
