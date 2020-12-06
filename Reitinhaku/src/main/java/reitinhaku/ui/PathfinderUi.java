@@ -257,11 +257,13 @@ public class PathfinderUi extends Application {
 
         gc.setStroke(Color.RED);
         gc.setLineWidth(3);
-        
+
         Node previous = graph.getGoal();
         while (previous != null) {
             Node temp = previous.getPrevious();
-            if (temp == null) break;
+            if (temp == null) {
+                break;
+            }
             gc.strokeLine(previous.getX(), previous.getY(), temp.getX(), temp.getY());
             previous = previous.getPrevious();
         }
@@ -285,8 +287,6 @@ public class PathfinderUi extends Application {
                     route.setHeight(image.getHeight());
 
                     graph = graphBuilder.buildGraphFromImage(image);
-
-                    graph.debug();
                 } catch (IOException ex) {
                     System.out.println("Error uploading an image: " + ex.toString());
                 }
