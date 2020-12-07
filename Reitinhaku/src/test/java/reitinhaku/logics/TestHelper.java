@@ -1,39 +1,26 @@
+package reitinhaku.logics;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import reitinhaku.domain.Graph;
 import reitinhaku.domain.Node;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author Mika Hoffren
  */
 public class TestHelper {
 
-    public Graph buildGraphFromDimensions(int x, int y) {
-        Node[][] nodeArr = new Node[y][x];
+    private Node[][] nodeArray;
 
-        createNodes(nodeArr, x, y);
-        connectNodes(nodeArr);
+    private void buildNodeArrayFromDimensions(int x, int y) {
+        nodeArray = new Node[y][x];
 
-        List<Node> nodes = new ArrayList<>();
+        createNodes(nodeArray, x, y);
+        connectNodes(nodeArray);
+    }
 
-        for (Node[] row : nodeArr) {
-            for (Node node : row) {
-                if (node != null) {
-                    nodes.add(node);
-                }
-            }
-        }
+    public Node[][] getNodeArray(int x, int y) {
+        buildNodeArrayFromDimensions(x, y);
 
-        return new Graph(nodes);
+        return nodeArray;
     }
 
     private void createNodes(Node[][] nodes, int x, int y) {
@@ -63,8 +50,27 @@ public class TestHelper {
             }
         }
     }
-    
-    public void removeNode(Graph graph, int x, int y) {
-        
+
+    public void removeRow(Node[][] nodeArr, int x) {
+        for (int i = 0; i < nodeArr[x].length; i++) {
+            nodeArray[x][i] = null;
+        }
+
+        connectNodes(nodeArr);
     }
+
+    public void addObstacles(Node[][] nodeArr) {
+        for (int i = 9; i < nodeArr.length - 9; i = i + 3) {
+            for (int j = 3; j < nodeArr[i].length; j++) {
+                if (i % 6 == 0) {
+                    nodeArr[i][nodeArr[i].length - j] = null;
+                } else {
+                    nodeArr[i][j] = null;
+                }
+            }
+        }
+
+        connectNodes(nodeArr);
+    }
+
 }
