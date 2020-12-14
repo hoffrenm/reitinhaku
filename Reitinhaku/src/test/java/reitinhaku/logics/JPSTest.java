@@ -5,9 +5,7 @@
  */
 package reitinhaku.logics;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import reitinhaku.domain.Node;
@@ -27,7 +25,7 @@ public class JPSTest {
     public void setUp() {
         this.testHelper = new TestHelper();
         this.jps = new JPS();
-        
+
         this.nodes = testHelper.getNodeArray(100, 100);
     }
 
@@ -58,7 +56,7 @@ public class JPSTest {
         Result result = jps.findPath(start, goal);
         assertTrue(Math.abs(result.getLength() - 138) < 1);
     }
-    
+
     @Test
     public void jpsExploresOnlyFewNodes() {
         Node start = nodes[1][1];
@@ -67,7 +65,7 @@ public class JPSTest {
         Result result = jps.findPath(start, goal);
         assertTrue(result.getExplored().size() < 3);
     }
-    
+
     @Test
     public void jpsPathHasFewNodes() {
         Node start = nodes[1][1];
@@ -76,7 +74,7 @@ public class JPSTest {
         Result result = jps.findPath(start, goal);
         assertTrue(result.getPath().size() < 3);
     }
-    
+
     @Test
     public void jpsResultsInMaze() {
         testHelper.addObstacles(nodes);

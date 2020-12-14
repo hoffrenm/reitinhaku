@@ -6,8 +6,6 @@
 package reitinhaku.logics;
 
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 
@@ -29,9 +27,7 @@ public class AStar {
      * @param explored List of explored nodes.
      * @param time Time elapsed on pathfinding.
      */
-    private void constructPath(Node goal, Queue<Node> explored, double time) {
-        this.solution = null;
-
+    private void constructPath(Node goal, PriorityQueue<Node> explored, double time) {
         ArrayList<Node> path = new ArrayList<>();
         ArrayList<Node> visited = new ArrayList<>();
         path.add(goal);
@@ -51,6 +47,7 @@ public class AStar {
     }
 
     /**
+     * Solves path between nodes using A*-algorithm if such exists.
      *
      * @param start Starting node.
      * @param goal Destination node.
@@ -61,9 +58,10 @@ public class AStar {
      */
     public Result findPath(Node start, Node goal) {
         double startTime = System.currentTimeMillis();
+        this.solution = null;
 
-        Queue<Node> openQueue = new PriorityQueue<>();
-        Queue<Node> closed = new PriorityQueue<>();
+        PriorityQueue<Node> openQueue = new PriorityQueue<>();
+        PriorityQueue<Node> closed = new PriorityQueue<>();
         openQueue.add(start);
 
         start.setgScore(0f);

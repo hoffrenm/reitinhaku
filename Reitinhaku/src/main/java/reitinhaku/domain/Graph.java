@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Represents graph which were created from image.
- * 
+ *
  * @see GraphBuilder
  *
  * @author Mika Hoffren
@@ -35,7 +35,8 @@ public class Graph {
     }
 
     /**
-     * Finds and sets starting node for the graph.
+     * Finds and sets starting node for the graph. Nonexistent node will result
+     * start to be null.
      *
      * @param x X coordinate of starting node.
      * @param y Y coordinate of starting node.
@@ -54,7 +55,8 @@ public class Graph {
     }
 
     /**
-     * Finds and sets goal node for the graph.
+     * Finds and sets goal node for the graph. Nonexistent node will result
+     * goal to be null.
      *
      * @param x X coordinate of goal node.
      * @param y Y coordinate of goal node.

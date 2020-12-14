@@ -7,8 +7,6 @@ package reitinhaku.logics;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 
@@ -31,9 +29,7 @@ public class JPS {
      * @param explored List of explored nodes.
      * @param time Time elapsed on pathfinding.
      */
-    private void constructPath(Node goal, Queue<Node> explored, double time) {
-        this.solution = null;
-
+    private void constructPath(Node goal, PriorityQueue<Node> explored, double time) {
         List<Node> path = new ArrayList<>();
         List<Node> visited = new ArrayList<>();
         path.add(goal);
@@ -53,6 +49,7 @@ public class JPS {
     }
 
     /**
+     * Solves path between nodes using JPS-algorithm if such exists.
      *
      * @param start Starting node.
      * @param goal Destination node.
@@ -63,9 +60,12 @@ public class JPS {
      */
     public Result findPath(Node start, Node goal) {
         double startTime = System.currentTimeMillis();
+        this.solution = null;
 
-        Queue<Node> openQueue = new PriorityQueue<>();
-        Queue<Node> closed = new PriorityQueue<>();
+        // closed queue is not used by algorithm.
+        // closed nodes are collected for visualization only.
+        PriorityQueue<Node> closed = new PriorityQueue<>();
+        PriorityQueue<Node> openQueue = new PriorityQueue<>();
         openQueue.add(start);
 
         start.setgScore(0f);
@@ -113,7 +113,7 @@ public class JPS {
     }
 
     /**
-     * Returns a node which is a jump point. Jump point node is considered being
+     * Finds a node which is a jump point. Jump point node is considered being
      * one of the possible shortest path to the goal node.
      *
      * @param next Current node being examined.
@@ -165,7 +165,7 @@ public class JPS {
      * @param dx change of coordinates in horizontal direction.
      * @param dy change of coordinates in vertical direction.
      * @return index of next neighbour in adjacency array.
-     * 
+     *
      * @see Node.
      */
     private int direction(int dx, int dy) {
@@ -191,11 +191,11 @@ public class JPS {
 
     /**
      * Returns all valid neighbours of node when direction of arrival is taken
-     * into consideration. Checks natural and forced neighbours.
+     * into consideration. Checks for natural and forced neighbours.
      *
      * @param next Node being currently examined.
      * @return Neighbouring nodes which fulfill pruning criteria.
-     * 
+     *
      * @see Node
      */
     private Node[] prunedNeighbours(Node next) {

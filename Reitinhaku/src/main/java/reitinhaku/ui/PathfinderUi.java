@@ -232,7 +232,7 @@ public class PathfinderUi extends Application {
         root.setRight(sidebar);
 
         root.setBackground(new Background(new BackgroundFill(Color.GAINSBORO, CornerRadii.EMPTY, Insets.EMPTY)));
-        root.setPrefHeight(1000);
+        root.setPrefHeight(1080);
         root.setPrefWidth(1300);
 
         Scene scene = new Scene(root);
