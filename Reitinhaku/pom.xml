@@ -55,7 +55,7 @@
                 <version>0.8.3</version>
                 <configuration>
                     <excludes>
-                        <exclude></exclude>
+                        <exclude>reitinhaku/ui/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
