@@ -21,14 +21,23 @@ Tavoitteena oli vertailla A* ja Jump Point Searchin tehokkuutta erilaisilla kart
 ### 32room_001 [kuva](https://movingai.com/benchmarks/room/32room_001.png)
 - 2060 testiä
 - etäisyydet välillä 1 - 821
+- Kartassa solmuja yhteensä 245 463
 
-Suoritusaika vs löydetyn reitin pituus
+#### Suoritusaika vs löydetyn reitin pituus
+
 ![time vs distance](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/images/room32_001_length.png)
-Tutkitut solmut vs löydetyn reitin pituus
+
+#### Tutkitut solmut vs löydetyn reitin pituus
+
 ![nodes vs distance](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/images/room32_001_nodes.png)
+
+Verrokkina oleva A* ilman heuristiikkaa päätyy usein tutkimaan suuren osan graafista ennen maalin löytymistä. Heuristiikan ansiosta A* osaa suunnata hakuaan maalia kohti ja onnistuu saavuttamaan maalisolmun huomattavasti nopeammin useimmissa tapauksissa. Jump point search toimii täysin omassa nopeusluokassaan. Huomioitavaa on myös se, ettei JPS kierrätä valtaosaa tarkasteltavista solmuista minimikeon kautta vaan hylkää ne karsintasääntöjen mukaisesti.
 
 ### maze512_16_0 [kuva](https://movingai.com/benchmarks/maze/maze512-16-0.png)
 - 9130 testiä
 - etäisyydet välillä 1 - 3649
+- Kartassa solmuja yhteensä 246 016
 
 ![time vs distance](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/images/maze512length.png)
+
+A*:n suoriutuminen sokkelossa muistuttaa hyvin paljon edellisen kartan "tyhmää A*:ia". Tämä johtuu siitä, että heuristiikka ei varsinaisesti ohjaa algoritmin toimintaa oikeaan suuntaan sokkelossa vaan usein reitinhaku ajautuu umpikujaan. Heuristiikan valinnalla voidaan merkittävästi vaikuttaa A*:n tehokkuuteen ja toisaalta tietynlainen kartta hävittää heuristiikasta saatavan hyödyn täysin. JPS puolestaan toimii takuuvarmasti nopeasti koska kartassa on paljon vaaka- ja pystysuunnan siirtymiä.
