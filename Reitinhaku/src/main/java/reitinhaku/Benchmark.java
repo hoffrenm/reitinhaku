@@ -37,8 +37,12 @@ public class Benchmark {
 
         ArrayList<String> astarResults = new ArrayList<>();
         ArrayList<String> jpsResults = new ArrayList<>();
+        ArrayList<String> astarNoHeurResults = new ArrayList<>();
 
         AStar astar = new AStar(new Heuristic());
+        Heuristic hr = new Heuristic();
+        hr.setHeuristic(4);
+        AStar astarNoHeur = new AStar(hr);
         JPS jps = new JPS(new Heuristic());
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(details));
@@ -49,6 +53,7 @@ public class Benchmark {
 
         Result r1;
         Result r2;
+        Result r3;
 
         String st;
         while ((st = bufferedReader.readLine()) != null) {
@@ -77,9 +82,16 @@ public class Benchmark {
                 jpsResults.add("jps;" + r2.getTime() + ";" + actualLength + ";" + r2.getExplored().size());
             }
 
+            graph.reset();
+            r3 = astarNoHeur.findPath(graph.getStart(), graph.getGoal());
+
+            if (Math.abs(r3.getLength() - actualLength) < 50) {
+                astarNoHeurResults.add("astarNoHeur;" + r3.getTime() + ";" + actualLength + ";" + r3.getExplored().size());
+            }
+
         }
 
-        writeToTextFile(fileName, astarResults, jpsResults);
+        writeToTextFile(fileName, astarResults, jpsResults, astarNoHeurResults);
 
     }
 
@@ -94,5 +106,5 @@ public class Benchmark {
 
         writer.close();
     }
-    
+
 }
