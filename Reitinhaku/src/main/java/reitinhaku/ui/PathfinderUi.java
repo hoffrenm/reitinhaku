@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,6 +28,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,6 +47,7 @@ import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
+import reitinhaku.logics.Heuristic;
 
 /**
  *
@@ -53,6 +57,7 @@ public class PathfinderUi extends Application {
 
     private AStar astar;
     private JPS jps;
+    private Heuristic heuristic;
 
     private final GraphBuilder graphBuilder;
     private Graph graph;
@@ -63,8 +68,9 @@ public class PathfinderUi extends Application {
     private final ImageView map;
 
     public PathfinderUi() {
-        this.astar = new AStar();
-        this.jps = new JPS();
+        this.heuristic = new Heuristic();
+        this.astar = new AStar(this.heuristic);
+        this.jps = new JPS(this.heuristic);
         this.graphBuilder = new GraphBuilder();
 
         this.root = new BorderPane();
@@ -92,16 +98,36 @@ public class PathfinderUi extends Application {
         VBox algorithms = new VBox();
         algorithms.setPadding(new Insets(20, 20, 20, 20));
         algorithms.setSpacing(5);
-        ToggleGroup group = new ToggleGroup();
+        ToggleGroup group1 = new ToggleGroup();
+        ToggleGroup group2 = new ToggleGroup();
 
         RadioButton rb1 = new RadioButton("A*");
-        rb1.setToggleGroup(group);
+        rb1.setToggleGroup(group1);
         rb1.setSelected(true);
-
         RadioButton rb2 = new RadioButton("Jump Point Search");
-        rb2.setToggleGroup(group);
+        rb2.setToggleGroup(group1);
 
-        algorithms.getChildren().addAll(new Label("Algoritmi"), rb1, rb2);
+        RadioButton heur1 = new RadioButton("Euklidinen");
+        heur1.setUserData((int) 1);
+        heur1.setToggleGroup(group2);
+        heur1.setSelected(true);
+        RadioButton heur2 = new RadioButton("Manhattan");
+        heur2.setToggleGroup(group2);
+        heur2.setUserData((int) 2);
+        RadioButton heur3 = new RadioButton("Chebyshev");
+        heur3.setToggleGroup(group2);
+        heur3.setUserData((int) 3);
+        RadioButton heur4 = new RadioButton("Vakio");
+        heur4.setUserData((int) 4);
+        heur4.setToggleGroup(group2);
+
+        group2.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) -> {
+            if (group2.getSelectedToggle() != null) {
+                heuristic.setHeuristic((int) group2.getSelectedToggle().getUserData());
+            }
+        });
+
+        algorithms.getChildren().addAll(new Label("Algoritmi"), rb1, rb2, new Label("Heuristiikka"), heur1, heur2, heur3, heur4);
 
         VBox coordinates = new VBox();
         HBox goalCoor = new HBox();
@@ -153,6 +179,8 @@ public class PathfinderUi extends Application {
         HBox h2 = new HBox();
         HBox h3 = new HBox();
         HBox h4 = new HBox();
+        Text t = new Text("");
+        t.setFill(Color.RED);
         Text t1 = new Text("Aika: ");
         Text time = new Text();
         Text t2 = new Text("Solmujen määrä reitillä: ");
@@ -165,7 +193,7 @@ public class PathfinderUi extends Application {
         h2.getChildren().addAll(t2, pathLength);
         h3.getChildren().addAll(t3, exploredNodes);
         h4.getChildren().addAll(t4, pathPixelLength);
-        results.getChildren().addAll(h1, h4, h2, h3);
+        results.getChildren().addAll(t, h1, h4, h2, h3);
 
         exitButton.setMinWidth(buttons.getPrefWidth());
         openButton.setMinWidth(buttons.getPrefWidth());
@@ -198,7 +226,7 @@ public class PathfinderUi extends Application {
             Node goal = graph.getGoal();
 
             if (start != null && goal != null) {
-                RadioButton selectedAlg = (RadioButton) group.getSelectedToggle();
+                RadioButton selectedAlg = (RadioButton) group1.getSelectedToggle();
                 String alg = selectedAlg.getText();
                 Result solution = null;
 
@@ -210,12 +238,17 @@ public class PathfinderUi extends Application {
 
                 if (solution != null) {
                     drawPath(solution);
+                    t.setText("");
                     time.setText(solution.getTime() + " ms");
                     pathLength.setText(solution.getPath().size() + " solmua");
                     exploredNodes.setText(solution.getExplored().size() + " solmua");
                     pathPixelLength.setText(solution.getLength() + " px");
                 } else {
-                    System.out.println("*** NO SOLUTION ***");
+                    t.setText("Reittiä ei löytynyt");
+                    time.setText("");
+                    pathLength.setText("");
+                    exploredNodes.setText("");
+                    pathPixelLength.setText("");
                 }
             }
         });
@@ -247,7 +280,7 @@ public class PathfinderUi extends Application {
 
     private void drawPath(Result solution) {
         GraphicsContext gc = route.getGraphicsContext2D();
-        gc.clearRect(0, 0, 1000, 1000);
+        gc.clearRect(0, 0, 1080, 1080);
 
         gc.setFill(Color.BLUE);
 
@@ -269,7 +302,7 @@ public class PathfinderUi extends Application {
         }
     }
 
-    EventHandler<ActionEvent> btnLoadEventListener
+    private EventHandler<ActionEvent> btnLoadEventListener
             = new EventHandler<ActionEvent>() {
 
         @Override
@@ -282,7 +315,7 @@ public class PathfinderUi extends Application {
                     BufferedImage bufferedImage = ImageIO.read(file);
                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                     map.setImage(image);
-                    route.getGraphicsContext2D().clearRect(0, 0, image.getHeight(), image.getWidth());
+                    route.getGraphicsContext2D().clearRect(0, 0, image.getWidth(), image.getHeight());
                     route.setWidth(image.getWidth());
                     route.setHeight(image.getHeight());
 

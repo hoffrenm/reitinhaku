@@ -19,6 +19,11 @@ import reitinhaku.domain.Result;
 public class JPS {
 
     private Result solution;
+    private Heuristic heuristic;
+
+    public JPS(Heuristic heuristic) {
+        this.heuristic = heuristic;
+    }
 
     /**
      * Generates solution which contains backtraced path from goal to start.
@@ -59,7 +64,7 @@ public class JPS {
      * @see Result
      */
     public Result findPath(Node start, Node goal) {
-        double startTime = System.currentTimeMillis();
+        double startTime = System.nanoTime();
         this.solution = null;
 
         // closed queue is not used by algorithm.
@@ -69,7 +74,7 @@ public class JPS {
         openQueue.add(start);
 
         start.setgScore(0f);
-        start.setfScore(Heuristic.euclidean(start, goal));
+        start.setfScore(heuristic.getDistance(start, goal));
 
         while (!openQueue.isEmpty()) {
             Node current = openQueue.poll();
@@ -77,7 +82,7 @@ public class JPS {
             closed.add(current);
 
             if (current == goal) {
-                double endTime = System.currentTimeMillis();
+                double endTime = System.nanoTime();
                 constructPath(current, closed, endTime - startTime);
                 break;
             }
@@ -96,13 +101,13 @@ public class JPS {
                     continue;
                 }
 
-                float distanceToJumpNode = Heuristic.euclidean(current, jumpNode);
+                float distanceToJumpNode = heuristic.euclidean(current, jumpNode);
                 float travelledDistance = current.getgScore() + distanceToJumpNode;
 
                 if (travelledDistance < jumpNode.getgScore()) {
                     jumpNode.setPrevious(current);
                     jumpNode.setgScore(travelledDistance);
-                    jumpNode.setfScore(travelledDistance + Heuristic.euclidean(jumpNode, goal));
+                    jumpNode.setfScore(travelledDistance + heuristic.getDistance(jumpNode, goal));
 
                     openQueue.add(jumpNode);
                 }

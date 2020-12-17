@@ -5,6 +5,7 @@
  */
 package reitinhaku.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +20,22 @@ public class Graph {
     private Node start;
     private Node goal;
 
-    private final List<Node> nodes;
+    private List<Node> nodes;
 
     public Graph(List<Node> nodes) {
         this.nodes = nodes;
+    }
+
+    /**
+     * Sets every node status to unexplored.
+     */
+    public void reset() {
+        for (Node node : nodes) {
+            node.setPrevious(null);
+            node.setfScore(Float.MAX_VALUE);
+            node.setgScore(Float.MAX_VALUE);
+            node.openNode();
+        }
     }
 
     /**
@@ -55,8 +68,8 @@ public class Graph {
     }
 
     /**
-     * Finds and sets goal node for the graph. Nonexistent node will result
-     * goal to be null.
+     * Finds and sets goal node for the graph. Nonexistent node will result goal
+     * to be null.
      *
      * @param x X coordinate of goal node.
      * @param y Y coordinate of goal node.

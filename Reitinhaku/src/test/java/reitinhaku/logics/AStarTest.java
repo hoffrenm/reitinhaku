@@ -25,8 +25,8 @@ public class AStarTest {
     @Before
     public void setUp() {
         this.testHelper = new TestHelper();
-        this.aStar = new AStar();
-        this.jps = new JPS();
+        this.aStar = new AStar(new Heuristic());
+        this.jps = new JPS(new Heuristic());
 
         this.nodes = testHelper.getNodeArray(100, 100);
     }

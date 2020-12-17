@@ -131,6 +131,10 @@ public class Node implements Comparable<Node> {
     public void closeNode() {
         this.closed = true;
     }
+    
+    public void openNode() {
+        this.closed = false;
+    }
 
     /**
      * Returns array containing 8 neighbours. Leftmost neighbour is at index 0

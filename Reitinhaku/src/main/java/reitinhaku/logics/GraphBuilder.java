@@ -5,6 +5,11 @@
  */
 package reitinhaku.logics;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.image.Image;
@@ -37,14 +42,55 @@ public class GraphBuilder {
      * @see Graph
      */
     public Graph buildGraphFromImage(Image map) {
-        int width = (int) map.getWidth();
-        int height = (int) map.getHeight();
+        int width = (int) map.getWidth() + 2;
+        int height = (int) map.getHeight() + 2;
 
         nodeArr = new Node[height][width];
 
-        createNodes(map, width, height);
+        createNodes(map);
         connectNodes();
 
+        List<Node> nodes = new ArrayList<>();
+
+        for (Node[] row : nodeArr) {
+            for (Node node : row) {
+                if (node != null) {
+                    nodes.add(node);
+                }
+            }
+        }
+
+        return new Graph(nodes);
+    }
+
+    /**
+     * Used to transform map into graph for benchmarking
+     *
+     * @param map Map file of the map.
+     * @return Graph.
+     */
+    public Graph buildGraphFromMapFile(File map) throws FileNotFoundException, IOException {
+        BufferedReader asciiMap = new BufferedReader(new FileReader(map));
+        nodeArr = new Node[514][514];
+
+        // Skip info at the beginning of map
+        for (int i = 0; i < 4; i++) {
+            asciiMap.readLine();
+        }
+
+        String st;
+        int index = 0;
+        while ((st = asciiMap.readLine()) != null) {
+            for (int j = 0; j < st.length(); j++) {
+                if (st.charAt(j) == '.') {
+                    nodeArr[index + 1][j + 1] = new Node(j, index);
+                }
+            }
+
+            index++;
+        }
+
+        connectNodes();
         List<Node> nodes = new ArrayList<>();
 
         for (Node[] row : nodeArr) {
@@ -65,8 +111,10 @@ public class GraphBuilder {
      * @param x Width of the map.
      * @param y Height of the map.
      */
-    private void createNodes(Image map, int x, int y) {
+    private void createNodes(Image map) {
         PixelReader reader = map.getPixelReader();
+        int x = (int) map.getWidth();
+        int y = (int) map.getHeight();
 
         for (int i = 0; i < y; i++) {
             for (int j = 0; j < x; j++) {
@@ -77,7 +125,7 @@ public class GraphBuilder {
                 int blue = (rgb & 0xff);
 
                 if (isNode(red, green, blue)) {
-                    nodeArr[i][j] = new Node(j, i);
+                    nodeArr[i + 1][j + 1] = new Node(j, i);
                 }
             }
         }

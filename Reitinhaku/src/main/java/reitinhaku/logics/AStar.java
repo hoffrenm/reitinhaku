@@ -6,6 +6,7 @@
 package reitinhaku.logics;
 
 import java.util.ArrayList;
+import java.util.List;
 import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 
@@ -18,6 +19,11 @@ import reitinhaku.domain.Result;
 public class AStar {
 
     private Result solution;
+    private Heuristic heuristic;
+
+    public AStar(Heuristic heuristic) {
+        this.heuristic = heuristic;
+    }
 
     /**
      * Generates solution which contains backtraced path from goal to start.
@@ -28,8 +34,8 @@ public class AStar {
      * @param time Time elapsed on pathfinding.
      */
     private void constructPath(Node goal, PriorityQueue<Node> explored, double time) {
-        ArrayList<Node> path = new ArrayList<>();
-        ArrayList<Node> visited = new ArrayList<>();
+        List<Node> path = new ArrayList<>();
+        List<Node> visited = new ArrayList<>();
         path.add(goal);
 
         Node previous = goal.getPrevious();
@@ -57,7 +63,7 @@ public class AStar {
      * @see Result
      */
     public Result findPath(Node start, Node goal) {
-        double startTime = System.currentTimeMillis();
+        double startTime = System.nanoTime();
         this.solution = null;
 
         PriorityQueue<Node> openQueue = new PriorityQueue<>();
@@ -65,7 +71,7 @@ public class AStar {
         openQueue.add(start);
 
         start.setgScore(0f);
-        start.setfScore(Heuristic.euclidean(start, goal));
+        start.setfScore(heuristic.getDistance(start, goal));
 
         while (!openQueue.isEmpty()) {
             Node current = openQueue.poll();
@@ -73,7 +79,7 @@ public class AStar {
             closed.add(current);
 
             if (current == goal) {
-                double endTime = System.currentTimeMillis();
+                double endTime = System.nanoTime();
                 constructPath(current, closed, endTime - startTime);
                 break;
             }
@@ -83,14 +89,12 @@ public class AStar {
                     continue;
                 }
 
-                float travelledDistance = current.getgScore();
-
-                travelledDistance += isDiagonal(current, next) ? Math.sqrt(2) : 1;
+                float travelledDistance = current.getgScore() + heuristic.euclidean(current, next);
 
                 if (travelledDistance < next.getgScore()) {
                     next.setPrevious(current);
                     next.setgScore(travelledDistance);
-                    next.setfScore(travelledDistance + Heuristic.euclidean(next, goal));
+                    next.setfScore(travelledDistance + heuristic.getDistance(next, goal));
 
                     openQueue.add(next);
                 }
@@ -98,17 +102,6 @@ public class AStar {
         }
 
         return solution;
-    }
-
-    /**
-     * Determines if two nodes are diagonal to each other.
-     *
-     * @param current
-     * @param next
-     * @return True if nodes are in diagonal position, false otherwise.
-     */
-    private boolean isDiagonal(Node current, Node next) {
-        return current.getX() != next.getX() && current.getY() != next.getY();
     }
 
 }

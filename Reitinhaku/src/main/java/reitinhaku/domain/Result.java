@@ -30,9 +30,9 @@ public class Result {
 
     /**
      * Returns time which algorithm took while solving the path between the goal
-     * and the start nodes in milliseconds.
+     * and the start nodes in nanoseconds.
      *
-     * @return Time in milliseconds.
+     * @return Time in nanoseconds.
      */
     public double getTime() {
         return time;

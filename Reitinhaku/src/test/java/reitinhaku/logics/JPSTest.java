@@ -24,7 +24,7 @@ public class JPSTest {
     @Before
     public void setUp() {
         this.testHelper = new TestHelper();
-        this.jps = new JPS();
+        this.jps = new JPS(new Heuristic());
 
         this.nodes = testHelper.getNodeArray(100, 100);
     }
