@@ -15,10 +15,10 @@ import reitinhaku.ui.PathfinderUi;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        
-        System.out.println(args.length);
         if (args.length == 1) {
+            System.out.println("Running scenario " + args[0]);
             Benchmark.run(args[0]);
+            System.out.println("Scenario finished. Check project folder for results.");
         } else {
             PathfinderUi.main(args);
         }

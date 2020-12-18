@@ -238,7 +238,7 @@ public class PathfinderUi extends Application {
                 if (solution != null) {
                     drawPath(solution);
                     t.setText("");
-                    time.setText(solution.getTime() + " ms");
+                    time.setText(solution.getTime()/1000000 + " ms");
                     pathLength.setText(solution.getPath().size() + " solmua");
                     exploredNodes.setText(solution.getExplored().size() + " solmua");
                     pathPixelLength.setText(solution.getLength() + " px");

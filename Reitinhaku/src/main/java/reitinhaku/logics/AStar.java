@@ -66,6 +66,8 @@ public class AStar {
         double startTime = System.nanoTime();
         this.solution = null;
 
+        // closed queue is not used by algorithm.
+        // closed nodes are collected for visualization only.
         PriorityQueue<Node> openQueue = new PriorityQueue<>();
         PriorityQueue<Node> closed = new PriorityQueue<>();
         openQueue.add(start);

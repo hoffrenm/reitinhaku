@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import reitinhaku.domain.Graph;
-import reitinhaku.domain.Node;
 import reitinhaku.domain.Result;
 import reitinhaku.logics.AStar;
 import reitinhaku.logics.GraphBuilder;
@@ -30,8 +29,6 @@ public class Benchmark {
     public static void run(String fileName) throws IOException, FileNotFoundException {
         String path = new File(".").getCanonicalPath();
 
-        GraphBuilder gb = new GraphBuilder();
-
         File details = new File(path + "/maps/" + fileName + ".map.scen");
         File map = new File(path + "/maps/" + fileName + ".map");
 
@@ -43,13 +40,12 @@ public class Benchmark {
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(details));
 
+        GraphBuilder gb = new GraphBuilder();
         Graph graph = gb.buildGraphFromMapFile(map);
 
         float actualLength = 0;
-
         Result r1;
         Result r2;
-
         String st;
         while ((st = bufferedReader.readLine()) != null) {
             String[] stats = st.split("\t");
@@ -67,14 +63,14 @@ public class Benchmark {
             r1 = astar.findPath(graph.getStart(), graph.getGoal());
 
             if (Math.abs(r1.getLength() - actualLength) < 50) {
-                astarResults.add("astar;" + r1.getTime() + ";" + actualLength + ";" + r1.getExplored().size());
+                astarResults.add("astar;" + r1.getTime() + ";" + r1.getLength() + ";" + r1.getExplored().size());
             }
 
             graph.reset();
             r2 = jps.findPath(graph.getStart(), graph.getGoal());
 
             if (Math.abs(r2.getLength() - actualLength) < 50) {
-                jpsResults.add("jps;" + r2.getTime() + ";" + actualLength + ";" + r2.getExplored().size());
+                jpsResults.add("jps;" + r2.getTime() + ";" + r2.getLength() + ";" + r2.getExplored().size());
             }
 
         }
@@ -94,5 +90,5 @@ public class Benchmark {
 
         writer.close();
     }
-    
+
 }
