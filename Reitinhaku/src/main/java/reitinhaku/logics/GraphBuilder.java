@@ -71,12 +71,12 @@ public class GraphBuilder {
      */
     public Graph buildGraphFromMapFile(File map) throws FileNotFoundException, IOException {
         BufferedReader asciiMap = new BufferedReader(new FileReader(map));
-        nodeArr = new Node[514][514];
-
-        // Skip info at the beginning of map
-        for (int i = 0; i < 4; i++) {
-            asciiMap.readLine();
-        }
+        asciiMap.readLine();
+        int height = Integer.parseInt(asciiMap.readLine().split(" ")[1]);
+        int width = Integer.parseInt(asciiMap.readLine().split(" ")[1]);
+        asciiMap.readLine();
+                
+        nodeArr = new Node[height + 2][width + 2];
 
         String st;
         int index = 0;
