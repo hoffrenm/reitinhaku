@@ -72,7 +72,6 @@ public class Benchmark {
             if (Math.abs(r2.getLength() - actualLength) < 50) {
                 jpsResults.add("jps;" + r2.getTime() + ";" + r2.getLength() + ";" + r2.getExplored().size());
             }
-
         }
 
         writeToTextFile(fileName, astarResults, jpsResults);
