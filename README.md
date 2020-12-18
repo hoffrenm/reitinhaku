@@ -6,16 +6,32 @@
 
 [Määrittelydokumentti](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/maarittelydokumentti.md)
 
-### Viikkoraportit
+[Toteutusdokumentti](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/toteutusdokumentti.md)
 
-[Viikko 1](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti1.md)
+[Testausdokumentti](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/testausdokumentti.md)
 
-[Viikko 2](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti2.md)
+[Käyttöohje](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/kayttoohje.md)
 
-[Viikko 3](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti3.md)
 
-[Viikko 4](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti4.md)
 
-[Viikko 5](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti5.md)
+<details>
+  <summary>
+    <span>
+      <b>Viikkoraportit</b>
+    </span>
+  </summary>
+  
+  [Viikko 1](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti1.md)
 
-[Viikko 6](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti6.md)
+  [Viikko 2](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti2.md)
+
+  [Viikko 3](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti3.md)
+
+  [Viikko 4](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti4.md)
+
+  [Viikko 5](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti5.md)
+
+  [Viikko 6](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/viikkoraportti6.md)
+  
+</details>
+
