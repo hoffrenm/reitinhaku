@@ -1,7 +1,13 @@
 # Toteutusdokumentti
 ## Sovelluksen rakenne
 
-TODO
+![Pakkauskaavio](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/images/packagediagram.PNG)
+
+Sovellusta voi suorittaa kahdella eri tavalla
+- Käynnistämällä sovellus ja käyttämällä sitä graafisen käyttöliittymän kautta
+- Suorittaa skenaarioita eli benchmarkata eri karttoja
+
+Näistä kerrottu tarkemmin [käyttöohjeessa.](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/kayttoohje.md)
 
 ## Algoritmien aika- ja tilavaativuudet
 
@@ -16,16 +22,16 @@ TODO
 | tapaus                   | Aikavaativuus      |
 | ------------------------ |:------------------:|
 | Huonoimmassa tapauksessa | _O_((E + V) log V) |
-| Keskimäärin              | _O_(E log V)       |
+| Keskimäärin              |        |
 
 Algoritmin suorituksen aikana solmut käydään läpi ottamalla se minimikeosta, tähän kuluu aikaa siis `V log(V)`. Jokaista solmua kohden käydään läpi sen vieruslista ja lisätään ne minimikekoon, tähän kuluu aikaa `E log(V)`. Jos kaikki solmut ja vieruslistat käydään läpi niin aikaa kuluu yhteensä `V log(V) + E log(V) = (E + V) log(V)`. Huonoimmassa tapauksessa A*:n suorituskyky lähestyy Djikstran-algoritmin suorituskykyä.
 
-Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia keskimääräinen aikavaativuus on useimmissa tapauksissa parempi arvio. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on sitäkin rajoitetumpi.
+Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia edellinen arvio on yläraja ja toteutuva aikavaativuus moninverroin parempi. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on huomattavasti rajoitetumpi.
 
 ### [JPS](https://github.com/hoffrenm/reitinhaku/blob/master/Reitinhaku/src/main/java/reitinhaku/logics/JPS.java)
 | tapaus                   | Aikavaativuus      |
 | ------------------------ |:------------------:|
-| Keskimäärin              | _O_(E log V)       |
+| Keskimäärin              |      |
 
 Jump point searchiin pätee teoriassa samat päättelyt kuin A*:iin koska algoritmit ovat rakenteeltaan samankaltaiset. JPS kuitenkin karsii huomattavan määrän lisättävistä solmuista rekursiivisessa funktiossa, jolloin minimikekoa käsitellään suhteellisen harvoin.
 
