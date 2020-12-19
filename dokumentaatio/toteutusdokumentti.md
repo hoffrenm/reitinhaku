@@ -12,6 +12,7 @@ Näistä kerrottu tarkemmin [käyttöohjeessa.](https://github.com/hoffrenm/reit
 ## Algoritmien aika- ja tilavaativuudet
 
 ### [Prioriteettijono](https://github.com/hoffrenm/reitinhaku/blob/master/Reitinhaku/src/main/java/reitinhaku/logics/PriorityQueue.java)
+
 | operaatio                       | Aikavaativuus     |
 | ------------------------------- |:-----------------:|
 | Alkion lisääminen               | _O_(log n)        |
@@ -21,20 +22,22 @@ Taulukkopohjaisen minikeon tilavaativuus on `O(n)`
 
 
 ### [A*](https://github.com/hoffrenm/reitinhaku/blob/master/Reitinhaku/src/main/java/reitinhaku/logics/AStar.java)
+
 | tapaus                   | Aikavaativuus      | Tilavaativuus |
 | ------------------------ |:------------------:|:-------------:|
 | Huonoimmassa tapauksessa | _O_((E + V) log V) | O(V)          |
-| Keskimääräinen arvio     | _O_(E + (V log V)) | O(V)          |
+| Keskimääräinen arvio     | _O_(V log V)      | O(V)           |
 
-Algoritmin suorituksen aikana solmut käydään läpi ottamalla se minimikeosta, tähän kuluu aikaa siis `V log(V)`. Jokaista solmua kohden käydään läpi sen vieruslista ja lisätään ne minimikekoon, tähän kuluu aikaa `E log(V)`. Jos kaikki solmut ja vieruslistat käydään läpi niin aikaa kuluu yhteensä `V log(V) + E log(V) = (E + V) log(V)`. Huonoimmassa tapauksessa A*:n suorituskyky lähestyy Djikstran-algoritmin suorituskykyä.
+Algoritmin suorituksen aikana solmut käydään läpi ottamalla se minimikeosta, tähän kuluu aikaa siis `V log(V)`. Jokaista solmua kohden käydään läpi sen vieruslista ja lisätään ne minimikekoon, tähän kuluu aikaa `E log(V)`. Jos kaikki solmut ja vieruslistat käydään läpi niin aikaa kuluu yhteensä `V log(V) + E log(V) = (E + V) log(V)`. Huonoimmassa tapauksessa A*:n suorituskyky lähestyy Dijkstran-algoritmin suorituskykyä.
 
-Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia edellinen arvio on yläraja ja usein toteutuva aikavaativuus moninverroin parempi. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on huomattavasti rajoitetumpi, joten jos kartta ja heuristiikka ovat yhteensopivat (eli keosta otetaan seuraavaksi solmu, joka on suurella todennäköisyydellä reitillä) voisi aikavaativuus olla jopa `O(E + (V log V))` (ja sitä parempikin).
+Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia edellinen arvio on yläraja ja toteutuva aikavaativuus usein moninverroin parempi. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on rajoitetumpi, joten jos kartta ja heuristiikka ovat yhteensopivat (eli keosta otetaan seuraavaksi solmu, joka on suurella todennäköisyydellä reitillä) voisi aikavaativuus olla jopa `O(V log V)`.
 
 ### [JPS](https://github.com/hoffrenm/reitinhaku/blob/master/Reitinhaku/src/main/java/reitinhaku/logics/JPS.java)
+
 | tapaus                   | Aikavaativuus      | Tilavaativuus |
 | ------------------------ |:------------------:|:-------------:|
 | Huonoimmassa tapauksessa | _O_((E + V) log V) | O(V)          |
-| Keskimääräinen arvio     | _O_(E + (V log V)) | O(V)          |
+| Keskimääräinen arvio     | _O_(V log V)       | O(V)          |
 
 Jump point searchiin pätee teoriassa samat päättelyt kuin A*:iin koska algoritmit ovat rakenteeltaan samankaltaiset. JPS kuitenkin karsii huomattavan määrän lisättävistä solmuista rekursiivisessa funktiossa, jolloin minimikekoa käsitellään suhteellisen harvoin. 
 
@@ -42,7 +45,7 @@ Päätös solmun hylkäämisestä on jump point searchissa lähempänä vakioaik
 
 ### Yleisesti
 
-Algoritmeille on vaikeaa antaa täsmällistä aikavaativuutta. Lopullinen aikavaativuus riippuu itse kartasta sekä hyvin paljon heuristiikasta, jonka avulla algoritmi valikoi seuraavaksi keosta otettavan solmun. A* palautuu Djikstran algoritmin tasolle mikäli heuristiikka ei ole karttaan sopiva ja toisaalta JPS toimii tehokkaasti myös kartoissa, jotka ovat sille teoriassa haastavia.
+Algoritmeille on vaikeaa antaa täsmällisiä aikavaativuuksia. Lopullinen aikavaativuus riippuu itse kartasta sekä hyvin paljon heuristiikasta, jonka avulla algoritmi valikoi seuraavaksi keosta otettavan solmun. A* palautuu Dijkstran algoritmin tasolle mikäli heuristiikka ei ole karttaan sopiva ja toisaalta JPS toimii tehokkaasti myös kartoissa, jotka ovat sille teoriassa haastavia.
 
 ## Suorituskykyvertailu
 
