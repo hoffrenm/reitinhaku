@@ -1,8 +1,13 @@
 # Sovelluksen testaus
 
-Sovelluksen ydintoiminnallisuutta, eli A*- ja JPS-algoritmien, heuristiikan sekä prioriteettijonon toimintaa on testattu kattavasti yksikkötesteillä. Algoritmien testit testaavat myös sovelluksen muiden osien toimintaa yhdessä, joten ne ajavat siten myös integraatiotestien virkaa. Käyttöliittymä on jätetty testauksen ulkopuolelle. Kaikkiaan dataobjekteja sekä logiikkaluokkia käsittelevien testien rivi- ja haaraumakattavuus on yli 90%.
+Sovelluksen ydintoiminnallisuutta, eli A*- ja JPS-algoritmien, heuristiikan sekä prioriteettijonon toimintaa on testattu kattavasti yksikkötesteillä. Algoritmien testit testaavat myös sovelluksen muiden osien toimintaa yhdessä, joten ne ajavat siten myös integraatiotestien virkaa. Käyttöliittymä on jätetty testauksen ulkopuolelle. Luokkia Node, Result, Graph ja GraphBuilder ei ole yksikkötestattu mutta niiden oletetaan toimivan halutusti muiden testien perusteella. Kaikkiaan dataobjekteja sekä logiikkaluokkia käsittelevien testien rivi- ja haaraumakattavuus on yli 90%.
 
 ![testauskattavuus](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/images/codecov.png)
+
+Kloonatussa projektissa yksikkötestit ja niihin liittyvän raportin voi suorittaa projektihakemistossa komennolla
+```
+mvn test jacoco:report
+```
 
 # Suorituskykyvertailu
 
