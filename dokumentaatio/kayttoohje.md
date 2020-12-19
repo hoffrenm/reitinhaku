@@ -17,7 +17,7 @@ Sovellus käynnistyy seuraavanlaiseen ikkunaan
 
 ### Kartan tuominen
 
-Painamalla "Lataa kartta" aukeaa tiedostovalitsin, jolla sovellukseen voidaan tuoda kuva kartasta. 
+Painamalla "Lataa kartta" aukeaa tiedostovalitsin, jolla sovellukseen voidaan tuoda kuva kartasta. Kartan koolle ei ole asetettu rajoitteita. Kaikki pikselit harmaasta valkoiseen tulkitaan solmuiksi ja loput pikselit ovat seiniä.
 
 ### Reitinhaku
 
@@ -59,6 +59,10 @@ Tulokset tallettuvat csv-formaatissa seuraavasti
 algoritmi;aika;pituus;tutkitutsolmut
 ```
 
-Yksi rivi käsittää yhden tuloksen ja tyypillisesti skenaario sisältää tuhansia pareja. Täten suoritusaika voi vaihdella joistain minuuteista tunteihin riippuen kartan haastavuudesta. Tulosten visualisointiin voit käyttää mieleistäsi datan visualisointityökalua.
+Yksi rivi käsittää yhden tuloksen ja tyypillisesti skenaario sisältää tuhansia pareja. Täten suoritusaika voi vaihdella joistain minuuteista useisiin kymmeniin riippuen kartan haastavuudesta. Tulosten visualisointiin voit käyttää mieleistäsi datan visualisointityökalua.
 
 [Testausdokumentissa](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/testausdokumentti.md#suorituskykyvertailu) tarkemmin tuloksista ja rajoitteista.
+
+### Huom
+
+Graafisen käyttöliittymän kautta annetun kartan täytyy olla kuva ja benchmarkkaukseen sopivat tiedostot ovat tekstitiedostoja.
