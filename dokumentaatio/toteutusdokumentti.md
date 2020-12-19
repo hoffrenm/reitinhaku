@@ -24,21 +24,21 @@ Taulukkopohjaisen minikeon tilavaativuus on `O(n)`
 | tapaus                   | Aikavaativuus      | Tilavaativuus |
 | ------------------------ |:------------------:|:-------------:|
 | Huonoimmassa tapauksessa | _O_((E + V) log V) | O(V)          |
-| Keskimääräinen arvio     | _O_(E log V)       | O(V)          |
+| Keskimääräinen arvio     | _O_(E + (V log V)) | O(V)          |
 
 Algoritmin suorituksen aikana solmut käydään läpi ottamalla se minimikeosta, tähän kuluu aikaa siis `V log(V)`. Jokaista solmua kohden käydään läpi sen vieruslista ja lisätään ne minimikekoon, tähän kuluu aikaa `E log(V)`. Jos kaikki solmut ja vieruslistat käydään läpi niin aikaa kuluu yhteensä `V log(V) + E log(V) = (E + V) log(V)`. Huonoimmassa tapauksessa A*:n suorituskyky lähestyy Djikstran-algoritmin suorituskykyä.
 
-Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia edellinen arvio on yläraja ja usein toteutuva aikavaativuus moninverroin parempi. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on huomattavasti rajoitetumpi, joten jos kartta ja heuristiikka ovat yhteensopivat (eli keosta otetaan seuraavaksi solmu, joka on suurella todennäköisyydellä reitillä) voisi aikavaativuus olla jopa `E log(V)`.
+Tässä toteutuksessa verkko on suhteellisen harva (solmulla enintään 8 kaarta), jonka takia edellinen arvio on yläraja ja usein toteutuva aikavaativuus moninverroin parempi. Heuristiikka ohjaa reitinhakua yleensä oikeaan suuntaan, jolloin kekoon lisättyjen ja tarkasteltavien solmujen määrä on huomattavasti rajoitetumpi, joten jos kartta ja heuristiikka ovat yhteensopivat (eli keosta otetaan seuraavaksi solmu, joka on suurella todennäköisyydellä reitillä) voisi aikavaativuus olla jopa `O(E + (V log V))` (ja sitä parempikin).
 
 ### [JPS](https://github.com/hoffrenm/reitinhaku/blob/master/Reitinhaku/src/main/java/reitinhaku/logics/JPS.java)
 | tapaus                   | Aikavaativuus      | Tilavaativuus |
 | ------------------------ |:------------------:|:-------------:|
 | Huonoimmassa tapauksessa | _O_((E + V) log V) | O(V)          |
-| Keskimääräinen arvio     | _O_(E log V)       | O(V)          |
+| Keskimääräinen arvio     | _O_(E + (V log V)) | O(V)          |
 
 Jump point searchiin pätee teoriassa samat päättelyt kuin A*:iin koska algoritmit ovat rakenteeltaan samankaltaiset. JPS kuitenkin karsii huomattavan määrän lisättävistä solmuista rekursiivisessa funktiossa, jolloin minimikekoa käsitellään suhteellisen harvoin. 
 
-Päätös solmun hylkäämisestä on jump point searchissa lähempänä vakioaikaista operaatiota toisin kuin A*:ssa, jossa solmu kierrätetään minimikeon kautta. Toisin sanoen A* päätyy tutkimaan useita symmetrisiä polkuja "turhaan" siinä missä JPS löytää yhden optimaalisen polun kahden solmun välillä, eikä tutki vaihtoehtoisia reittejä.
+Päätös solmun hylkäämisestä on jump point searchissa lähempänä vakioaikaista operaatiota toisin kuin A*:ssa, jossa solmu kierrätetään minimikeon kautta. Toisin sanoen A* päätyy tutkimaan useita symmetrisiä polkuja "turhaan" siinä missä JPS löytää yhden optimaalisen polun hyppypisteiden välillä, eikä tutki vaihtoehtoisia reittejä. Lisäksi JPS lisää yhden solmun ainoastaan kerran kekoon algoritmin suorituksen aikana.
 
 ### Yleisesti
 
@@ -50,5 +50,14 @@ Testattuani algoritmeja useilla eri kartoilla JPS selvittää reitin usein 5-20 
 
 Tarkemmin suorituskykyvertailusta [testausdokumentissa.](https://github.com/hoffrenm/reitinhaku/blob/master/dokumentaatio/testausdokumentti.md#testausasetelma)
 
+## Parannettavaa
+
+- Käyttöliittymä on yhdessä tiedostossa eikä noudata kovin hyvää koodaustapaa.
+- Kenties järkevämpi tapa vertailla algoritmeja olisi olisi ollut esimerkiksi iteraatioiden määrä koska heuristiikka ja kartan luonne vaikuttavat merkittävästi algoritmien toimintaa.
+
 # Lähteet
 - [Canonical Orderings on Grids](https://web.cs.du.edu/~sturtevant/papers/SturtevantRabin16), Nathan R. Sturtevant, Steve Rabin
+- [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm#cite_note-1), Wikipedia
+- [JPS Algorithm Adaptation and Optimization to Three-dimensional Space](https://www.utupub.fi/bitstream/handle/10024/148054/DI_tyo_Pertti_Ranttila_final.pdf?sequence=1&isAllowed=y), Pertti Ranttila
+- [Amit’s A* Pages](http://theory.stanford.edu/~amitp/GameProgramming/)
+- [The JPS Pathfinding System](https://www.aaai.org/ocs/index.php/SOCS/SOCS12/paper/viewFile/5396/5212), Daniel Haraborand, Alban Grastien
